@@ -11,11 +11,12 @@ def get_ema(current_price, last_ema=-1, number_of_days=26):
 def calc_sma(prices, periods):
     prices = np.array(prices)
     sma = []
-    for i in range(periods,len(prices)-1):
-        sma.append(np.sum(prices[-periods:i]) / periods)
+    for i in range(periods,len(prices)):
+        sma.append(np.sum(prices[(i - periods):i]) / periods)
     return sma
 def calc_ema(prices, periods):
     sma = calc_sma(prices, periods)
+    #plt.plot(sma)
     ema = []
     for i in range(0, len(sma) - 1):
         if i == 0:
@@ -26,6 +27,8 @@ def calc_ema(prices, periods):
 def calc_macd(prices):
     ema_26 = calc_ema(prices, 26)
     ema_12 = calc_ema(prices, 12)
+    z = np.zeros(len(ema_12)-len(ema_26))
+    ema_26 = np.concatenate((z,np.array(ema_26)))
     macd_line = np.array(ema_12) - np.array(ema_26)
     signal_line = calc_ema(macd_line,9)
     return macd_line, signal_line
